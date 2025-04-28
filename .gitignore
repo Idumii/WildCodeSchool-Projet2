@@ -5,6 +5,7 @@
 #  fichier explicite
 tmdb_movies.csv
 tmdb_movies.csv.gz
+
 #  répertoire(s) où l’on stocke les dumps IMDb / TMDB bruts
 data/raw/
 datasets/
