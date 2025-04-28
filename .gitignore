@@ -1,0 +1,72 @@
+# ───────────────────────────────────────────────
+# 1) ENFANTS DU DOSSIER DATA / RAW DATA
+#    (gros jeux de données non versionnés)
+# ───────────────────────────────────────────────
+#  fichier explicite
+tmdb_movies.csv
+
+#  répertoire(s) où l’on stocke les dumps IMDb / TMDB bruts
+data/raw/
+datasets/
+#  formats volumineux courants
+*.csv.gz
+*.tsv.gz
+*.zip
+*.tar
+*.tar.gz
+*.parquet
+*.feather
+*.hdf5
+*.pickle
+*.joblib
+
+# ───────────────────────────────────────────────
+# 2) PYTHON & VENV
+# ───────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.so
+# virtualenv
+env/
+venv/
+.venv/
+# fichiers d’environnement
+.env
+.env.*
+
+# ───────────────────────────────────────────────
+# 3) JUPYTER / IPYNB
+# ───────────────────────────────────────────────
+.ipynb_checkpoints/
+# sorties HTML ou slides générées
+*.nbconvert.html
+*.slides.html
+
+# ───────────────────────────────────────────────
+# 4) LOGS, TESTS, TEMP
+# ───────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+*.out
+
+# coverage / testing tools
+htmlcov/
+.coverage
+.tox/
+pytest_cache/
+
+# ───────────────────────────────────────────────
+# 5) outillage IDE & OS
+# ───────────────────────────────────────────────
+# VS Code
+.vscode/
+# PyCharm / IntelliJ
+.idea/
+# macOS & Windows
+.DS_Store
+Thumbs.db
+Icon?
+# Linux : fichiers swap
+*~
+*.swp
