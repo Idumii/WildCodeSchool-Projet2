@@ -57,48 +57,28 @@ def get_movie_ids(movie_id: int):
 
 poster_url = "https://image.tmdb.org/t/p/original/"
 
+# Fonction qui va récuperer les films en fonction de la date de sortie et du nombre de votes
 def get_movies(page_count: int, primary_release_date_gte: str, primary_release_date_lte: str):
-    """
-    Récupère les films sortis entre deux dates, en français ou en anglais,
-    avec au moins 100 votes, et retourne un DataFrame contenant les résultats
-    de plusieurs pages.
-    """
-    all_movies_data = []  # Liste pour stocker les données de toutes les pages
-
+    all_movies_data = []
     for page_number in range(1, page_count + 1):
-        # Construire l'URL pour chaque page
         url = (
             f"https://api.themoviedb.org/3/discover/movie"
             f"?include_adult=false&include_video=true&language=fr-FR"
-            f"&page={page_number}&sort_by=primary_release_date.desc"
+            f"&page={page_number}&sort_by=vote_count.desc"
             f"&primary_release_date.gte={primary_release_date_gte}"
             f"&primary_release_date.lte={primary_release_date_lte}"
         )
-
-        # Effectuer la requête
         response = requests.get(url, headers=headers)
-
         if response.status_code == 200:
             data = response.json()
             movies = data.get('results', [])
-
-            # Filtrer et ajouter les films à la liste
             for movie in movies:
-                if movie.get('original_language') in ['fr', 'en'] and movie.get('vote_count') >= 100:
-                    all_movies_data.append({
-                        'id': movie.get('id'),
-                        'poster_path': poster_url + movie.get('poster_path', ''),
-                        'video': get_movie_videos(movie.get('id')),
-                        'tconst': get_movie_ids(movie.get('id')),
-                        'frenchOverview': movie.get('overview', ''),
-                    })
+                if movie.get('original_language') in ['fr', 'en'] and movie.get('vote_count', 0) >= 500:
+                    all_movies_data.append(movie.get('id'))
         else:
             print(f"Erreur lors de la récupération des données pour la page {page_number}: {response.status_code}")
             break
-
-    # Créer un DataFrame à partir de la liste
-    df_movies = pd.DataFrame(all_movies_data)
-    return df_movies
+    return all_movies_data
 
 
 def complete_movie_data(imdb_id: str):
@@ -136,3 +116,41 @@ def complete_movie_data(imdb_id: str):
             'frenchOverview': None
         }
         
+        
+        
+# Récuperer les details des films pour notre df de ML et Display
+def get_movie_details(movie_id):
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}?language=fr-FR&append_to_response=videos,credits"
+    response = requests.get(url, headers=headers)
+    time.sleep(0.25)  # Respect du rate limit
+    if response.status_code == 200:
+        data = response.json()
+        # Récupération des réalisateurs
+        directors = [crew['name'] for crew in data.get('credits', {}).get('crew', []) if crew.get('job') == 'Director']
+        # Récupération des 3 premiers acteurs
+        actors = [cast['name'] for cast in data.get('credits', {}).get('cast', [])][:3]
+        # Récupération de la bande-annonce (YouTube)
+        video = None
+        for v in data.get('videos', {}).get('results', []):
+            if v.get('type') == 'Trailer' and v.get('site') == 'YouTube':
+                video = f"https://www.youtube.com/watch?v={v.get('key')}"
+                break
+        # Récupération des genres
+        genres = [g['name'] for g in data.get('genres', [])]
+        return {
+            'frenchTitle': data.get('title'),
+            'primaryTitle': data.get('original_title'),
+            'averageRating': data.get('vote_average'),
+            'runtimeMinutes': data.get('runtime'),
+            'genres': ', '.join(genres),
+            'startYear': int(data.get('release_date', '0000')[:4]) if data.get('release_date') else None,
+            'overview': data.get('overview'),
+            'directors': ', '.join(directors),
+            'acteurs': ', '.join(actors),
+            'poster_path': f"https://image.tmdb.org/t/p/w500{data.get('poster_path')}" if data.get('poster_path') else None,
+            'video': video,
+            'frenchOverview': data.get('overview'),  # ou autre champ si tu veux une version différente
+        }
+    else:
+        print(f"Erreur détails film ID {movie_id} : code {response.status_code}")
+        return None
