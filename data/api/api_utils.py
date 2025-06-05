@@ -141,6 +141,7 @@ def get_movie_details(movie_id):
             'frenchTitle': data.get('title'),
             'primaryTitle': data.get('original_title'),
             'averageRating': data.get('vote_average'),
+            'numVotes': data.get('vote_count'),
             'runtimeMinutes': data.get('runtime'),
             'genres': ', '.join(genres),
             'startYear': int(data.get('release_date', '0000')[:4]) if data.get('release_date') else None,
