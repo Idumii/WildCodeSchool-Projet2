@@ -3,13 +3,22 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import os
+import sys
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 #st.image("image_data_analyse.png", width=150)
 
+# Chemin pour accéder aux ressources
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+df_display_path = os.path.join(BASE_DIR, '../ressources', 'df_display.csv')
+df_final_path = os.path.join(BASE_DIR, '../ressources', 'df_final.csv')
+df_v4_path = os.path.join(BASE_DIR, '../ressources', 'df_v4.csv')
+
 # Charger le fichier CSV contenant les données à afficher
-df_display = pd.read_csv('../ressources/df_display.csv', sep=';', encoding='utf-8')
-df = pd.read_csv('../ressources/df_final.csv', sep=';', encoding='utf-8')
-df_v4 = pd.read_csv('../ressources/df_v4.csv', sep=';', encoding='utf-8')
+df_display = pd.read_csv(df_display_path, sep=';', encoding='utf-8')
+df = pd.read_csv(df_final_path, sep=';', encoding='utf-8')
+df_v4 = pd.read_csv(df_v4_path, sep=';', encoding='utf-8')
 
 st.title("Étapes du projet")
 st.write("Après notre étude de marché sur la consommation de cinéma dans la région de la Creuse, nous avons réalisé une analyse approndie de la base de données pour identifier les tendances et les préférences des spectateurs. ")

@@ -1,4 +1,3 @@
-from machineLearning.ml_utils import pipeline, find_neighbors
 import streamlit as st
 from streamlit_searchbox import st_searchbox
 import pandas as pd
@@ -6,8 +5,9 @@ import os
 import sys
 
 # Ajoute le chemin absolu vers le dossier racine du projet
-sys.path.append(os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from machineLearning.ml_utils import pipeline, find_neighbors
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 df_display_path = os.path.join(BASE_DIR, '../ressources', 'df_display.csv')
