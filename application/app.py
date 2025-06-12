@@ -51,8 +51,10 @@ if recent_movies:
 else:
     st.write("Aucun film récent trouvé.")
 
+st.divider()
 
 # Affichage des films les mieux notés par décennie
+st.write("## Films les mieux notés par décennie")
 options = [
     "1970", "1980", "1990", "2000", "2010", "2020"
 ]
@@ -72,37 +74,36 @@ movies_decade = get_top_movies_decade(
 
 # On va afficher les films dans 5 colonnes
 if movies_decade:
-    st.write(f"## Films les mieux notés des années {selection}s")
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
         if len(movies_decade) > 0:
-            st.write(
-                f"### {movies_decade[0]['frenchTitle']} ({movies_decade[0]['startYear']})")
             if movies_decade[0].get('poster_path'):
                 st.image(movies_decade[0]['poster_path'], width=200)
+            st.write(
+                f"{movies_decade[0]['frenchTitle']} ({movies_decade[0]['startYear']})")
     with col2:
         if len(movies_decade) > 1:
-            st.write(
-                f"### {movies_decade[1]['frenchTitle']} ({movies_decade[1]['startYear']})")
             if movies_decade[1].get('poster_path'):
                 st.image(movies_decade[1]['poster_path'], width=200)
+            st.write(
+                f"{movies_decade[1]['frenchTitle']} ({movies_decade[1]['startYear']})")
     with col3:
         if len(movies_decade) > 2:
-            st.write(
-                f"### {movies_decade[2]['frenchTitle']} ({movies_decade[2]['startYear']})")
             if movies_decade[2].get('poster_path'):
                 st.image(movies_decade[2]['poster_path'], width=200)
+            st.write(
+                f"{movies_decade[2]['frenchTitle']} ({movies_decade[2]['startYear']})")
     with col4:
         if len(movies_decade) > 3:
-            st.write(
-                f"### {movies_decade[3]['frenchTitle']} ({movies_decade[3]['startYear']})")
             if movies_decade[3].get('poster_path'):
                 st.image(movies_decade[3]['poster_path'], width=200)
+            st.write(
+                f"{movies_decade[3]['frenchTitle']} ({movies_decade[3]['startYear']})")
     with col5:
         if len(movies_decade) > 4:
-            st.write(
-                f"### {movies_decade[4]['frenchTitle']} ({movies_decade[4]['startYear']})")
             if movies_decade[4].get('poster_path'):
                 st.image(movies_decade[4]['poster_path'], width=200)
+            st.write(
+                f"{movies_decade[4]['frenchTitle']} ({movies_decade[4]['startYear']})")
 else:
     st.write("Aucun film trouvé pour cette décennie.")
