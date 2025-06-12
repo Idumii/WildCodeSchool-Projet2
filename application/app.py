@@ -1,11 +1,10 @@
-import streamlit as st
-import pandas as pd
 import os
 import sys
-print("test")
 # Ajoute le chemin absolu vers le dossier racine du projet
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+import streamlit as st
+import pandas as pd
+from streamlit.components.v1 import html
 from data.api.api_utils import *
 
 st.set_page_config(
@@ -16,6 +15,42 @@ st.set_page_config(
 st.write("# Page de base 👋")
 
 st.sidebar.success("Choisir une page au-dessus.")
+
+# Affichage des dernières sorties de films
+recent_movies = get_recent_movies(page_count=1)
+
+if recent_movies:
+    st.write("## Films récemment sortis")
+    
+    # Initialiser l'index de défilement dans la session
+    if "movie_start_index" not in st.session_state:
+        st.session_state.movie_start_index = 0
+
+    # Nombre de films à afficher par groupe
+    movies_per_page = 3
+    start_index = st.session_state.movie_start_index
+    end_index = start_index + movies_per_page
+
+    # Afficher les films dans une grille de 3 colonnes
+    cols = st.columns(3)
+    for idx, movie in enumerate(recent_movies[start_index:end_index]):
+        col = cols[idx % 3]
+        with col:
+            if movie.get("poster_path"):
+                st.image(movie["poster_path"], width=150)
+            st.write(f"**{movie['frenchTitle']}**")
+
+    # Ajouter des boutons pour naviguer entre les groupes de films
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button("Précédent") and start_index > 0:
+            st.session_state.movie_start_index -= movies_per_page
+    with col2:
+        if st.button("Suivant") and end_index < len(recent_movies):
+            st.session_state.movie_start_index += movies_per_page
+else:
+    st.write("Aucun film récent trouvé.")
+
 
 # Affichage des films les mieux notés par décennie
 options = [
@@ -41,27 +76,32 @@ if movies_decade:
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
         if len(movies_decade) > 0:
-            st.write(f"### {movies_decade[0]['frenchTitle']} ({movies_decade[0]['startYear']})")
+            st.write(
+                f"### {movies_decade[0]['frenchTitle']} ({movies_decade[0]['startYear']})")
             if movies_decade[0].get('poster_path'):
                 st.image(movies_decade[0]['poster_path'], width=200)
     with col2:
         if len(movies_decade) > 1:
-            st.write(f"### {movies_decade[1]['frenchTitle']} ({movies_decade[1]['startYear']})")
+            st.write(
+                f"### {movies_decade[1]['frenchTitle']} ({movies_decade[1]['startYear']})")
             if movies_decade[1].get('poster_path'):
                 st.image(movies_decade[1]['poster_path'], width=200)
     with col3:
         if len(movies_decade) > 2:
-            st.write(f"### {movies_decade[2]['frenchTitle']} ({movies_decade[2]['startYear']})")
+            st.write(
+                f"### {movies_decade[2]['frenchTitle']} ({movies_decade[2]['startYear']})")
             if movies_decade[2].get('poster_path'):
                 st.image(movies_decade[2]['poster_path'], width=200)
-    with col4: 
+    with col4:
         if len(movies_decade) > 3:
-            st.write(f"### {movies_decade[3]['frenchTitle']} ({movies_decade[3]['startYear']})")
+            st.write(
+                f"### {movies_decade[3]['frenchTitle']} ({movies_decade[3]['startYear']})")
             if movies_decade[3].get('poster_path'):
                 st.image(movies_decade[3]['poster_path'], width=200)
     with col5:
         if len(movies_decade) > 4:
-            st.write(f"### {movies_decade[4]['frenchTitle']} ({movies_decade[4]['startYear']})")
+            st.write(
+                f"### {movies_decade[4]['frenchTitle']} ({movies_decade[4]['startYear']})")
             if movies_decade[4].get('poster_path'):
                 st.image(movies_decade[4]['poster_path'], width=200)
 else:
