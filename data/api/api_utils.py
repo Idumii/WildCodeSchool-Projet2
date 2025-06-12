@@ -194,6 +194,7 @@ def get_top_movies_decade(decade: int, page_count: int = 1):
                 'frenchTitle': movie.get('title', 'Titre inconnu'),
                 'startYear': int(movie.get('release_date', '0000')[:4]) if movie.get('release_date') else 'Année inconnue',
                 'poster_path': f"https://image.tmdb.org/t/p/w500{movie.get('poster_path')}" if movie.get('poster_path') else None,
+                'vote_average': movie.get('vote_average', 0),
             })
     else:
         print(f"Erreur lors de la récupération des films pour la décennie {decade}: {response.status_code}")
