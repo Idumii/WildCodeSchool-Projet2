@@ -24,24 +24,20 @@ options = [
 selection = st.pills(
     "Sélectionner une décennie",
     options=options,
-    index=0,
-    format_func=lambda x: f"{x}s",
-)
-decennie = st.selectbox(
-    "Choisir une décénnie",
-    options=["1970", "1980", "1990", "2000", "2010", "2020"],
-    index=0,
+    selection_mode="single",
+    default=options[0],
 )
 
+
 movies_decade = get_top_movies_decade(
-    decade=int(decennie),
+    decade=int(selection),
     page_count=1
 )
 
 
 # On va afficher les films dans 5 colonnes
 if movies_decade:
-    st.write(f"## Films les mieux notés des années {decennie}s")
+    st.write(f"## Films les mieux notés des années {selection}s")
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
         if len(movies_decade) > 0:
