@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 import time
 
+
 # headers pour l'API de TMDB
 headers = {
     "accept": "application/json",
@@ -155,3 +156,46 @@ def get_movie_details(movie_id):
     else:
         print(f"Erreur détails film ID {movie_id} : code {response.status_code}")
         return None
+    
+    
+# Récupere les films les mieux notés d'une décennie spécifique    
+def get_top_movies_decade(decade: int, page_count: int = 1):
+    """
+    Récupère les 5 films les mieux notés d'une décennie spécifique.
+    
+    Args:
+        decade (int): La décennie à rechercher (ex: 1990, 2000).
+        page_count (int): Nombre de pages à récupérer. Par défaut 1 car on trie par note et on limite à 5 films.
+        
+    Returns:
+        list: Liste des films avec leurs détails.
+    """
+    primary_release_date_gte = f"{decade}-01-01"
+    primary_release_date_lte = f"{decade + 10}-01-01"
+    print(f"Récupération des films pour la décennie {decade} de {primary_release_date_gte} à {primary_release_date_lte}")
+    url = (
+        f"https://api.themoviedb.org/3/discover/movie"
+        f"?include_adult=false&include_video=false&language=fr-FR"
+        f"&sort_by=vote_average.desc&vote_count.gte=500"
+        f"&primary_release_date.gte={primary_release_date_gte}"
+        f"&primary_release_date.lte={primary_release_date_lte}"
+        f"&page=1"
+    )
+    
+    response = requests.get(url, headers=headers)
+    movies_details = []  
+    
+    if response.status_code == 200:
+        data = response.json()
+        movies = data.get('results', [])
+        
+        for movie in movies[:5]:
+            movies_details.append({
+                'frenchTitle': movie.get('title', 'Titre inconnu'),
+                'startYear': int(movie.get('release_date', '0000')[:4]) if movie.get('release_date') else 'Année inconnue',
+                'poster_path': f"https://image.tmdb.org/t/p/w500{movie.get('poster_path')}" if movie.get('poster_path') else None,
+            })
+    else:
+        print(f"Erreur lors de la récupération des films pour la décennie {decade}: {response.status_code}")
+    
+    return movies_details
