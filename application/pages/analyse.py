@@ -9,6 +9,7 @@ import numpy as np
 # Charger le fichier CSV contenant les données à afficher
 df_display = pd.read_csv('../ressources/df_display.csv', sep=';', encoding='utf-8')
 df = pd.read_csv('../ressources/df_final.csv', sep=';', encoding='utf-8')
+df_v4 = pd.read_csv('../ressources/df_v4.csv', sep=';', encoding='utf-8')
 
 st.title("Étapes du projet")
 st.write("Après notre étude de marché sur la consommation de cinéma dans la région de la Creuse, nous avons réalisé une analyse approndie de la base de données pour identifier les tendances et les préférences des spectateurs. ")
@@ -179,3 +180,21 @@ with tab4:
     st.pyplot(fig)
     st.write("Ci-dessus, l'évolution du nombre de films par année et par décennie. On peut voir que le nombre de films produits a considérablement augmenté depuis les années 90, avec un pic dans les années 2000.")
 
+st.divider()
+
+st.subheader("🤖​ Machine Learning")
+st.write("Nous avons utilisé un modèle de Machine Learning pour prédire les recommandations en fonction d'un film. Pour entrainer notre modèle, nous avons décidé de ne garder que certaines colonnes de notre dataframe :")
+st.write("- :green['frenchTitle'] : titre français")
+st.write("- :green['genres'] : genre")
+st.write("- :green['averageRating'] : note moyenne")
+st.write("- :green['numVotes'] : nombre de votes")
+st.write("- :green['actor1'] : acteur principal")
+st.write("- :green['actor2'] : second acteur")
+st.write("- :green['actor3'] : troisième acteur")
+st.write("- :green['director'] : réalisateur")
+st.write("- :green['decade'] : décennie de sortie du film")
+st.write(" Aperçu du jeu de données utilisé pour l'entraînement du modèle :")
+st.dataframe(df_v4.head(10), use_container_width=True)
+
+st.write("Nous avons ensuite utilisé le modèle de Machine Learning :green['KNN'] (K-Nearest Neighbors) pour prédire les recommandations en fonction d'un film.")
+st.write("Nous avons aussi créé une fonction pour alourdir la valeur des colonnes, afin de donner plus de poids à certaines colonnes lors de l'entraînement du modèle")
