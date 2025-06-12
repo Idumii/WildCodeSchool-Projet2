@@ -153,44 +153,98 @@ if selected_movie:
     titre_clean = selected_movie.split(" (")[0]
     year_clean = int(selected_movie.split(" (")[1].replace(")", ""))
     movie = movie_info(titre_clean, year_clean)
-    if movie:
-        st.write(f"**Titre en français :** {movie['frenchTitle']}")
-        st.write(f"**Titre original :** {movie['originalTitle']}")
-        st.write(f"**Année de sortie :** {movie['year']}")
-        st.write(f"**Note moyenne :** {movie['averageRating']}")
-        st.write(f"**Durée du film :** {movie['runtimeMinutes']} minutes")
-        st.write(f"**Genres :** {', '.join(movie['genres']) if isinstance(movie['genres'], list) else movie['genres']}")
-        st.write(f"**Résumé :** {movie['frenchOverview']}")
-        st.write(f"**Acteurs :** {', '.join(movie['actors']) if isinstance(movie['actors'], list) else movie['actors']}")
-        st.write(f"**Réalisateurs :** {', '.join(movie['directors']) if isinstance(movie['directors'], list) else movie['directors']}")
-        # Afficher l'affiche et la bande annonce si elles existent       
-        if movie['posterUrl']:
-            st.image(movie['posterUrl'], caption=movie['frenchTitle'])
-        else:
-            pass
-        
-        try:
-            
-            if movie['trailerUrl']:
-                st.write("**Bande annonce :**")
-                st.video(movie['trailerUrl'])
-            else:
-                pass
-        except Exception as e:
-            st.error(f"Bande annonce non disponible")
-    else:
-        st.write("Aucune information disponible pour ce film.")
 
-    # Film similaires suggérés
-    st.write("### Films similaires suggérés")
-    suggestions = movies_suggestions(titre_clean, year_clean)
-    st.write(f"Des films qui pourrait vous plaire si vous aimez {movie['frenchTitle']}:")
-    if suggestions:
-        for row in suggestions:
-            st.write(f"**Titre :** {row['frenchTitle']}")
-            st.write(f"**Note moyenne :** {row['averageRating']}")
-            st.write(
-                f"**Genres :** {', '.join(row['genres']) if isinstance(row['genres'], list) else row['genres']}")
-            st.write("---")
+    if movie:
+        st.markdown(f"## 🎬 {movie['frenchTitle']} ({movie['year']})")
+
+        col_left, col_right = st.columns([1, 2])
+        
+        with col_left:
+            if movie['posterUrl']:
+                st.image(movie['posterUrl'], width=200)
+        
+        with col_right:
+            note = f"{movie['averageRating']} / 10"
+            try:
+                minutes = int(movie['runtimeMinutes'])
+                hours = minutes // 60
+                mins = minutes % 60
+                duree = f"{hours}h {mins}min"
+            except:
+                duree = movie['runtimeMinutes']
+            
+            genres = ', '.join(movie['genres']) if isinstance(movie['genres'], list) else movie['genres']
+            resume = movie['frenchOverview']
+
+            st.markdown(f"**⭐ Note :** {note}")
+            st.markdown(f"**⏱️ Durée :** {duree}")
+            st.markdown(f"**🎭 Genres :** {genres}")
+            st.markdown("**📝 Résumé :**")
+            st.write(resume)
+
+        # Acteurs et Réalisateurs
+        st.markdown("---")
+        st.markdown("### 👥 Acteurs principaux")
+        st.write(', '.join(movie['actors']) if isinstance(movie['actors'], list) else movie['actors'])
+
+        st.markdown("### 🎬 Réalisateur(s)")
+        st.write(', '.join(movie['directors']) if isinstance(movie['directors'], list) else movie['directors'])
+
+        # Bande-annonce
+        st.markdown("---")
+        st.markdown("### 🎞️ Bande annonce")
+        trailer = movie.get('trailerUrl', '')
+        if trailer and isinstance(trailer, str) and trailer.strip():
+            try:
+                st.video(trailer)
+            except Exception as e:
+                st.info("Aucune bande annonce disponible pour ce film.")
+        else:
+            st.info("Aucune bande annonce disponible pour ce film.")
+
     else:
-        st.write("Aucune suggestion de film similaire disponible.")
+        st.warning("Aucune information disponible pour ce film.")
+
+    st.divider()
+    
+    # Afficher les suggestions de films similaires
+    st.write("## 🎥 Films similaires suggérés")
+
+    suggestions = movies_suggestions(titre_clean, year_clean)
+    st.markdown(f"Des films qui pourraient vous plaire si vous aimez **{movie['frenchTitle']}** :")
+
+    if suggestions:
+        # Nombre de colonnes par ligne
+        suggestions = suggestions[:9]
+        columns_per_row = 3
+        rows = (len(suggestions) + columns_per_row - 1) // columns_per_row
+
+        for row_index in range(rows):
+            cols = st.columns(columns_per_row)
+            for col_index in range(columns_per_row):
+                suggestion_index = row_index * columns_per_row + col_index
+                if suggestion_index < len(suggestions):
+                    row = suggestions[suggestion_index]
+
+                    # Chercher l'affiche dans le DataFrame original
+                    poster = None
+                    try:
+                        poster = movies_dp[movies_dp['frenchTitle'] == row['frenchTitle']]['poster_path'].values[0]
+                    except:
+                        pass
+
+                    with cols[col_index]:
+                        image_url = poster if poster else "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
+                        st.image(image_url, width=150)
+
+                        st.markdown(f"**{row['frenchTitle']}**")
+                        st.markdown(f"⭐ {row['averageRating']} / 10")
+
+                        genres = ', '.join(row['genres']) if isinstance(row['genres'], list) else row['genres']
+                        st.markdown(f"🎭 {genres}")
+            if row_index < rows - 1:
+                st.markdown("""
+                    <div style='margin: 20px 0; border-bottom: 1px dotted #111;'></div>
+                """, unsafe_allow_html=True)                        
+    else:
+        st.info("Aucune suggestion de film similaire disponible.")
