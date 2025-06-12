@@ -195,6 +195,6 @@ st.write("- :green['director'] : réalisateur")
 st.write("- :green['decade'] : décennie de sortie du film")
 st.write(" Aperçu du jeu de données utilisé pour l'entraînement du modèle :")
 st.dataframe(df_v4.head(10), use_container_width=True)
-
+st.write("Nous avons utilisé un MultilabelBinarizer pour transformer les colonnes :green['genres'], :green['actors'] et :green['director'] en colonnes binaires. Cela permet de transformer les genres et les acteurs en colonnes binaires, ce qui est nécessaire pour l'entraînement du modèle de Machine Learning.")
 st.write("Nous avons ensuite utilisé le modèle de Machine Learning :green['KNN'] (K-Nearest Neighbors) pour prédire les recommandations en fonction d'un film.")
 st.write("Nous avons aussi créé une fonction pour alourdir la valeur des colonnes, afin de donner plus de poids à certaines colonnes lors de l'entraînement du modèle")
