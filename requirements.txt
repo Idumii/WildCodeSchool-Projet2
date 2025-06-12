@@ -114,6 +114,7 @@ soupsieve==2.7
 stack-data==0.6.3
 streamlit==1.45.1
 streamlit-searchbox==0.1.22
+streamlit_carousel==1.1.2
 tenacity==9.1.2
 terminado==0.18.1
 threadpoolctl==3.6.0

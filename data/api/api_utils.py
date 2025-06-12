@@ -199,3 +199,44 @@ def get_top_movies_decade(decade: int, page_count: int = 1):
         print(f"Erreur lors de la récupération des films pour la décennie {decade}: {response.status_code}")
     
     return movies_details
+
+
+# Récuperer les films sortis recemment et disponible en francais
+def get_recent_movies(page_count: int = 1):
+    """
+    Récupère les films sortis récemment et disponibles en français, uniquement en France.
+    
+    Args:
+        page_count (int): Nombre de pages à récupérer. Par défaut 1.
+        
+    Returns:
+        list: Liste des films avec leurs détails.
+    """
+    today = datetime.now().strftime('%Y-%m-%d')
+    primary_release_date_gte = (datetime.now().replace(day=1) - pd.DateOffset(months=1)).strftime('%Y-%m-%d')
+    
+    url = (
+        f"https://api.themoviedb.org/3/discover/movie"
+        f"?include_adult=false&include_video=false&language=fr-FR"
+        f"&region=FR" 
+        f"&sort_by=popularity.desc&primary_release_date.gte={primary_release_date_gte}"
+        f"&primary_release_date.lte={today}&page=1"
+    )
+    print("test")
+    response = requests.get(url, headers=headers)
+    movies_details = []  
+    
+    if response.status_code == 200:
+        data = response.json()
+        movies = data.get('results', [])
+        
+        for movie in movies[:12]:
+            movies_details.append({
+                'frenchTitle': movie.get('title', 'Titre inconnu'),
+                'startYear': movie.get('release_date'),
+                'poster_path': f"https://image.tmdb.org/t/p/w500{movie.get('poster_path')}" if movie.get('poster_path') else None,
+            })
+    else:
+        print(f"Erreur lors de la récupération des films récents: {response.status_code}")
+    
+    return movies_details
