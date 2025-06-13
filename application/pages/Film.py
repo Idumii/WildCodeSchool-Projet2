@@ -176,7 +176,8 @@ year_clean = int(st.session_state.current_movie.split(" (")[1].replace(")", ""))
 movie = movie_info(titre_clean, year_clean)
 
 if movie:
-    st.markdown(f"## 🎬 {movie['frenchTitle']} ({movie['year']})")
+    # Affichage des infos du film
+    st.markdown(f"## 🎬 {movie.get('frenchTitle', 'Titre inconnu')} ({movie.get('year', '?')})")
 
     col_left, col_right = st.columns([1, 2])
     
@@ -223,68 +224,65 @@ if movie:
     else:
         st.info("Aucune bande annonce disponible pour ce film.")
 
+    # Suggestions cliquables
+    st.write("## 🎥 Films similaires suggérés")
+    suggestions = movies_suggestions(titre_clean, year_clean)
+    if suggestions:
+        st.markdown(f"Des films qui pourraient vous plaire si vous aimez **{movie.get('frenchTitle', 'ce film')}** :")
+        suggestions = suggestions[:9]
+        columns_per_row = 3
+        rows = (len(suggestions) + columns_per_row - 1) // columns_per_row
+
+        # Assurer l'unicité des suggestions
+        seen = set()
+        unique_suggestions = []
+        for row in suggestions:
+            title = row['frenchTitle']
+            if title not in seen:
+                seen.add(title)
+                unique_suggestions.append(row)
+
+        for row_index in range(rows):
+            cols = st.columns(columns_per_row)
+            for col_index in range(columns_per_row):
+                suggestion_index = row_index * columns_per_row + col_index
+                if suggestion_index < len(unique_suggestions):
+                    row = unique_suggestions[suggestion_index]
+                    poster = None
+                    try:
+                        poster = movies_dp[movies_dp['frenchTitle'] == row['frenchTitle']]['poster_path'].values[0]
+                    except:
+                        pass
+                    try:
+                        year = movies_dp[movies_dp['frenchTitle'] == row['frenchTitle']]['startYear'].values[0]
+                    except:
+                        year = "?"
+                    with cols[col_index]:
+                        image_url = poster if poster else "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
+                        st.image(image_url, width=150)
+                        movie_label = f"{row['frenchTitle']} ({year})"
+                        if st.button(movie_label, key=f"sugg_{row['frenchTitle']}_{year}_{suggestion_index}"):
+                            select_suggestion(movie_label)
+                            # Ajoute ce script juste après le bouton (il sera exécuté au prochain affichage)
+                            st.markdown(
+                                """
+                                <script>
+                                window.scrollTo({top: 0, behavior: "smooth"});
+                                </script>
+                                """,
+                                unsafe_allow_html=True
+                            )
+                        st.markdown(f"⭐ {row['averageRating']} / 10")
+                        genres = ', '.join(row['genres']) if isinstance(row['genres'], list) else row['genres']
+                        st.markdown(f"🎭 {genres}")
+            if row_index < rows - 1:
+                st.markdown(
+                    "<div style='margin: 20px 0; border-bottom: 1px dotted #111;'></div>",
+                    unsafe_allow_html=True
+                )
+    else:
+        st.info("Aucune suggestion de film similaire disponible.")
 else:
     st.warning("Aucune information disponible pour ce film.")
-
-st.divider()
-
-# Suggestions cliquables
-st.write("## 🎥 Films similaires suggérés")
-suggestions = movies_suggestions(titre_clean, year_clean)
-st.markdown(f"Des films qui pourraient vous plaire si vous aimez **{movie['frenchTitle']}** :")
-
-if suggestions:
-    suggestions = suggestions[:9]
-    columns_per_row = 3
-    rows = (len(suggestions) + columns_per_row - 1) // columns_per_row
-
-    # Assurer l'unicité des suggestions
-    seen = set()
-    unique_suggestions = []
-    for row in suggestions:
-        title = row['frenchTitle']
-        if title not in seen:
-            seen.add(title)
-            unique_suggestions.append(row)
-
-    for row_index in range(rows):
-        cols = st.columns(columns_per_row)
-        for col_index in range(columns_per_row):
-            suggestion_index = row_index * columns_per_row + col_index
-            if suggestion_index < len(unique_suggestions):
-                row = unique_suggestions[suggestion_index]
-                poster = None
-                try:
-                    poster = movies_dp[movies_dp['frenchTitle'] == row['frenchTitle']]['poster_path'].values[0]
-                except:
-                    pass
-                try:
-                    year = movies_dp[movies_dp['frenchTitle'] == row['frenchTitle']]['startYear'].values[0]
-                except:
-                    year = "?"
-                with cols[col_index]:
-                    image_url = poster if poster else "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg"
-                    st.image(image_url, width=150)
-                    movie_label = f"{row['frenchTitle']} ({year})"
-                    if st.button(movie_label, key=f"sugg_{row['frenchTitle']}_{year}_{suggestion_index}"):
-                        select_suggestion(movie_label)
-                        # Ajoute ce script juste après le bouton (il sera exécuté au prochain affichage)
-                        st.markdown(
-                            """
-                            <script>
-                            window.scrollTo({top: 0, behavior: "smooth"});
-                            </script>
-                            """,
-                            unsafe_allow_html=True
-                        )
-                    st.markdown(f"⭐ {row['averageRating']} / 10")
-                    genres = ', '.join(row['genres']) if isinstance(row['genres'], list) else row['genres']
-                    st.markdown(f"🎭 {genres}")
-        if row_index < rows - 1:
-            st.markdown(
-                "<div style='margin: 20px 0; border-bottom: 1px dotted #111;'></div>",
-                unsafe_allow_html=True
-            )
-else:
-    st.info("Aucune suggestion de film similaire disponible.")
+    # Ici, on n'affiche rien d'autre (pas de suggestions)
 
