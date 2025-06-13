@@ -160,6 +160,7 @@ def select_suggestion(movie_label):
     if "movie_searchbox" in st.session_state:
         del st.session_state["movie_searchbox"]
     st.rerun()
+    # Ce code ne sera pas exécuté après rerun, donc il faut l'ajouter juste après l'appel du bouton
 
 # Si on sélectionne un film dans la searchbox, on l'affiche (sauf si déjà modifié par un bouton)
 if selected_movie and st.session_state.current_movie != selected_movie:
@@ -216,7 +217,7 @@ if movie:
     trailer = movie.get('trailerUrl', '')
     if trailer and isinstance(trailer, str) and trailer.strip():
         try:
-            st.video(trailer)
+            st.video(trailer, autoplay=True, muted=True)
         except Exception as e:
             st.info("Aucune bande annonce disponible pour ce film.")
     else:
@@ -267,6 +268,15 @@ if suggestions:
                     movie_label = f"{row['frenchTitle']} ({year})"
                     if st.button(movie_label, key=f"sugg_{row['frenchTitle']}_{year}_{suggestion_index}"):
                         select_suggestion(movie_label)
+                        # Ajoute ce script juste après le bouton (il sera exécuté au prochain affichage)
+                        st.markdown(
+                            """
+                            <script>
+                            window.scrollTo({top: 0, behavior: "smooth"});
+                            </script>
+                            """,
+                            unsafe_allow_html=True
+                        )
                     st.markdown(f"⭐ {row['averageRating']} / 10")
                     genres = ', '.join(row['genres']) if isinstance(row['genres'], list) else row['genres']
                     st.markdown(f"🎭 {genres}")
