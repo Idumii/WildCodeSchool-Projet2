@@ -6,6 +6,10 @@ import streamlit as st
 if "current_movie" in st.session_state:
     del st.session_state["current_movie"]
 
+# Vide la searchbox de la page Film si elle existe
+if "movie_searchbox" in st.session_state:
+    del st.session_state["movie_searchbox"]
+
 
 # Ajoute le chemin absolu vers le dossier racine du projet
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
