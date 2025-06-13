@@ -113,43 +113,22 @@ movies_decade = get_top_movies_decade(
 )
 
 
-# On va afficher les films dans 5 colonnes
+# On va afficher les films dans 5 colonnes, cliquables
 if movies_decade:
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        if len(movies_decade) > 0:
-            if movies_decade[0].get('poster_path'):
-                st.image(movies_decade[0]['poster_path'], width=200)
-            st.write(
-                f"{movies_decade[0]['frenchTitle']} ({movies_decade[0]['startYear']})")
-
-    with col2:
-        if len(movies_decade) > 1:
-            if movies_decade[1].get('poster_path'):
-                st.image(movies_decade[1]['poster_path'], width=200)
-            st.write(
-                f"{movies_decade[1]['frenchTitle']} ({movies_decade[1]['startYear']})")
-
-    with col3:
-        if len(movies_decade) > 2:
-            if movies_decade[2].get('poster_path'):
-                st.image(movies_decade[2]['poster_path'], width=200)
-            st.write(
-                f"{movies_decade[2]['frenchTitle']} ({movies_decade[2]['startYear']})")
-
-    with col4:
-        if len(movies_decade) > 3:
-            if movies_decade[3].get('poster_path'):
-                st.image(movies_decade[3]['poster_path'], width=200)
-            st.write(
-                f"{movies_decade[3]['frenchTitle']} ({movies_decade[3]['startYear']})")
-
-    with col5:
-        if len(movies_decade) > 4:
-            if movies_decade[4].get('poster_path'):
-                st.image(movies_decade[4]['poster_path'], width=200)
-            st.write(
-                f"{movies_decade[4]['frenchTitle']} ({movies_decade[4]['startYear']})")
-
+    cols = st.columns(5)
+    for idx in range(5):
+        if len(movies_decade) > idx:
+            movie = movies_decade[idx]
+            with cols[idx]:
+                if movie.get('poster_path'):
+                    st.image(movie['poster_path'], width=200)
+                movie_label = f"{movie['frenchTitle']} ({movie['startYear']})"
+                if st.button(movie_label, key=f"decade_{movie['frenchTitle']}_{movie['startYear']}"):
+                    st.session_state.current_movie = movie_label
+                    if "accueil_movie_searchbox" in st.session_state:
+                        del st.session_state["accueil_movie_searchbox"]
+                    st.switch_page("pages/Film.py")
+                else:
+                    pass
 else:
     st.write("Aucun film trouvé pour cette décennie.")
