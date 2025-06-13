@@ -1,18 +1,59 @@
 import os
 import sys
+import streamlit as st
+
+# Vide le film courant à chaque chargement de la page Accueil
+if "current_movie" in st.session_state:
+    del st.session_state["current_movie"]
+
+
 # Ajoute le chemin absolu vers le dossier racine du projet
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import streamlit as st
 import pandas as pd
 from streamlit.components.v1 import html
 from data.api.api_utils import *
+from streamlit_searchbox import st_searchbox
+
+# Ajoute le chemin absolu vers le dossier racine du projet
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from machineLearning.ml_utils import pipeline, find_neighbors
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+df_display_path = os.path.join(BASE_DIR, '..', 'ressources', 'df_display.csv')
+df_ml_path = os.path.join(BASE_DIR, '..', 'ressources', 'df_ml.csv')
+
+movies_dp = pd.read_csv(df_display_path, sep=';', encoding='utf-8')
+movies_ml = pd.read_csv(df_ml_path, sep=';', encoding='utf-8')
 
 st.set_page_config(
     page_title="Accueil",
     page_icon="👋",
 )
 
-st.write("# Page de base 👋")
+
+def search_movies(query: str):
+    filtered_movies = movies_dp[movies_dp['frenchTitle'].str.contains(
+        query, case=False, na=False)]
+    return [
+        f"{row['frenchTitle']} ({row['startYear']})"
+        for _, row in filtered_movies.iterrows()
+    ]
+
+selected_movie = st_searchbox(
+    search_movies,
+    key="accueil_movie_searchbox",
+    placeholder="Rechercher un film..."
+)
+
+if selected_movie:
+    st.session_state.current_movie = selected_movie
+    # Réinitialise la searchbox d'accueil pour éviter la boucle
+    del st.session_state["accueil_movie_searchbox"]
+    st.switch_page("pages/Film.py")  # ou "Film" selon ta config multipage
+
+# Ici, ne fais rien d'autre avec st.session_state.current_movie
+# Affiche toujours la searchbox sur la page accueil
 
 st.sidebar.success("Choisir une page au-dessus.")
 

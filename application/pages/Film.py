@@ -287,3 +287,4 @@ if suggestions:
             )
 else:
     st.info("Aucune suggestion de film similaire disponible.")
+
