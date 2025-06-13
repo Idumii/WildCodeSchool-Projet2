@@ -34,7 +34,7 @@ st.set_page_config(
     page_icon="🎬",
 )
 
-st.sidebar.header("Recherche de films")
+#st.sidebar.header("Recherche de films")
 
 
 # Fonction pour récupérer les suggestions dynamiques
@@ -140,6 +140,7 @@ def movies_suggestions(titre: str, year: int) -> list:
     
 # Barre de recherche avec suggestions dynamiques
 st.write("# Rechercher un film 🎬")
+
 # Nettoyage de l'état de la searchbox si besoin
 if "movie_searchbox" in st.session_state and st.session_state["movie_searchbox"] is None:
     del st.session_state["movie_searchbox"]
@@ -214,15 +215,15 @@ if movie:
 
     # Bande-annonce
     st.markdown("---")
-    st.markdown("### 🎞️ Bande annonce")
+    st.markdown("### 🎞️ Bande-annonce")
     trailer = movie.get('trailerUrl', '')
     if trailer and isinstance(trailer, str) and trailer.strip():
         try:
             st.video(trailer, autoplay=True, muted=True)
         except Exception as e:
-            st.info("Aucune bande annonce disponible pour ce film.")
+            st.info("Aucune bande-annonce disponible pour ce film.")
     else:
-        st.info("Aucune bande annonce disponible pour ce film.")
+        st.info("Aucune bande-annonce disponible pour ce film.")
 
     # Suggestions cliquables
     st.write("## 🎥 Films similaires suggérés")

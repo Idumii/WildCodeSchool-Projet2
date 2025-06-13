@@ -21,11 +21,12 @@ df = pd.read_csv(df_final_path, sep=';', encoding='utf-8')
 df_v4 = pd.read_csv(df_v4_path, sep=';', encoding='utf-8')
 
 st.title("Étapes du projet")
-st.write("Après notre étude de marché sur la consommation de cinéma dans la région de la Creuse, nous avons réalisé une analyse approndie de la base de données pour identifier les tendances et les préférences des spectateurs. ")
+st.write("Après notre étude de marché sur la consommation de cinéma dans la région de la Creuse, nous avons réalisé une analyse approfondie de la base de données pour identifier les tendances et les préférences des spectateurs.")
 st.write("Ci-dessous, les étapes suivies.")
 
 st.subheader("🌐​ Jeux de données utilisés")
-st.write("Nous avons utilisé le jeu de données TMDB (The Movie Database) et IMDB (Internet Movie Database) pour notre analyse.")
+st.write("Nous avons utilisé les jeux de données TMDB (The Movie Database) et IMDb (Internet Movie Database) pour notre analyse.")
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -59,20 +60,20 @@ with col2:
 st.divider()
 
 st.subheader("🕵️​ Nettoyage des données")
-st.write("Nous avons pré-filtré les données pour réduire notre jeu de données à ~17 000 lignes :")
+st.write("Nous avons pré-filtré les données pour réduire notre jeu de données à environ 17 000 lignes :")
 st.write("- Jointure des deux bases de données avec les clés communes :green['tconst'] et :green['imdb_id'].")
 st.write("- Suppression des films sans titre.")
 st.write("- Suppression des genres : Documentary / Short / News / Talk-show / Game-Show / Reality-TV / Adult.")
-st.write("- Passages des colonnes :green['runtimeMinutes'], :green['id'], :green['popularity'], :green['runtime'], :green['revenue'], :green['vote_average'], :green['vote_count'] en format numérique.")
-st.write("- Passages des dates en format datetime.")
-st.write("- Filtre la colonne :green['production_country'] pour ne garder que les films français, américain ou britannique (USA|GB|FR|US).")
+st.write("- Passage des colonnes :green['runtimeMinutes'], :green['id'], :green['popularity'], :green['runtime'], :green['revenue'], :green['vote_average'], :green['vote_count'] au format numérique.")
+st.write("- Passage des dates au format datetime.")
+st.write("- Filtre de la colonne :green['production_country'] pour ne garder que les films français, américains ou britanniques (USA|GB|FR|US).")
 st.write("- Suppression des films sans note.")
 st.write("- Suppression des films sortis avant 1990 dont la note est inférieure à 7/10.")
-st.write("- Suppression des films ayant moins de 1500 votes.")
-st.write("- Suppression des films dont la durée est inférieure à 60 minutes et supérieure à 250 minutes. ")
+st.write("- Suppression des films ayant moins de 1 500 votes.")
+st.write("- Suppression des films dont la durée est inférieure à 60 minutes ou supérieure à 250 minutes.")
 st.write("- Filtre pour ne garder que les 3 principaux acteurs et 1 réalisateur par film.")
 st.write("")
-st.write("Aperçu du jeu après un premier nettoyage:") 
+st.write("Aperçu du jeu après un premier nettoyage :")
 st.dataframe(df.head(5), use_container_width=True)
 st.markdown(":orange-badge[⚠️ Note :] D'autres modifications ont été apportées au jeu de données par la suite pour améliorer l'apprentissage de notre modèle de Machine Learning.")
 # st.write("À noter que d'autres modifications ont été apportées au jeu de données par la suite pour améliorer l'apprentissage du Machine Learning.") 
@@ -93,7 +94,7 @@ with tab1:
     plt.xlabel('Durée (minutes)')
     plt.ylabel('Nombre de films')
     st.pyplot(fig1)
-    st.write("On constate qu'une courbe de Gauss se créé lorsqu'on affiche la distribution de la durée des films. On peut voir le pic de la distribution autour de 90-95 minutes, ce qui correspond à la durée moyenne d'un film. On peut aussi voir que la majorité des films ont une durée comprise entre 60 et 150 minutes.")
+    st.write("On constate qu'une courbe de Gauss se crée lorsqu'on affiche la distribution de la durée des films. On peut voir le pic de la distribution autour de 90-95 minutes, ce qui correspond à la durée moyenne d'un film. On peut aussi voir que la majorité des films ont une durée comprise entre 60 et 150 minutes.")
 
 # Graphique pour la répartition des productions par pays
 # Créer un dataframe avec les pays
@@ -121,7 +122,7 @@ with tab2:
     plt.ylabel('Pays')
     plt.show()
     st.pyplot(fig2)
-    st.write("Ci-dessus, la répartition des productions par pays. Nous pouvons encore voir des pays différents de ceux que nous avons sélectionnés pour notre étude de marché car il est affiché les pays ayant collaborés avec des productions américaines, britanniques ou françaises. On peut voir que les États-Unis sont le pays qui produit le plus de films, suivi de la France et du Royaume-Uni.")
+    st.write("Ci-dessus, la répartition des productions par pays. Nous pouvons encore voir des pays différents de ceux que nous avons sélectionnés pour notre étude de marché car il s'agit des pays ayant collaboré avec des productions américaines, britanniques ou françaises. On peut voir que les États-Unis sont le pays qui produit le plus de films, suivis de la France et du Royaume-Uni.")
 
 # Dataframe avec les acteurs les plus présents
 with tab3:
@@ -151,7 +152,7 @@ with tab3:
     plt.ylabel('Directeurs')
     plt.show()
     st.pyplot(fig3)
-    st.write("Ci-dessus, les 10 directeurs de films les plus présents dans notre jeu de données. On peut voir que Woddy Allen est le directeur le plus présent, suivi de Steven Soderbergh et Clint Eastwood.")
+    st.write("Ci-dessus, les 10 réalisateurs les plus présents dans notre jeu de données. On peut voir que Woody Allen est le réalisateur le plus présent, suivi de Steven Soderbergh et Clint Eastwood.")
 
 with tab4:
     df['year'] = pd.to_datetime(df['startYear'], format='%Y')
@@ -187,12 +188,10 @@ with tab4:
     ax.legend(title="Décennie")
     plt.tight_layout()
     st.pyplot(fig)
-    st.write("Ci-dessus, l'évolution du nombre de films par année et par décennie. On peut voir que le nombre de films produits a considérablement augmenté depuis les années 90, avec un pic dans les années 2000.")
-
-st.divider()
+    st.write("Ci-dessus, l'évolution du nombre de films par année et par décennie. On peut voir que le nombre de films produits a considérablement augmenté depuis les années 1990, avec un pic dans les années 2000.")
 
 st.subheader("🤖​ Machine Learning")
-st.write("Nous avons utilisé un modèle de Machine Learning pour prédire les recommandations en fonction d'un film. Pour entrainer notre modèle, nous avons décidé de ne garder que certaines colonnes de notre dataframe :")
+st.write("Nous avons utilisé un modèle de Machine Learning pour prédire les recommandations en fonction d'un film. Pour entraîner notre modèle, nous avons décidé de ne garder que certaines colonnes de notre DataFrame :")
 st.write("- :green['frenchTitle'] : titre français")
 st.write("- :green['genres'] : genre")
 st.write("- :green['averageRating'] : note moyenne")
@@ -202,7 +201,7 @@ st.write("- :green['actor2'] : second acteur")
 st.write("- :green['actor3'] : troisième acteur")
 st.write("- :green['director'] : réalisateur")
 st.write("- :green['decade'] : décennie de sortie du film")
-st.write(" Aperçu du jeu de données utilisé pour l'entraînement du modèle :")
+st.write("Aperçu du jeu de données utilisé pour l'entraînement du modèle :")
 st.dataframe(df_v4.head(10), use_container_width=True)
 st.write("Nous avons utilisé un MultilabelBinarizer pour transformer les colonnes :green['genres'], :green['actors'] et :green['director'] en colonnes binaires. Cela permet de transformer les genres et les acteurs en colonnes binaires, ce qui est nécessaire pour l'entraînement du modèle de Machine Learning.")
 st.write("Nous avons ensuite utilisé le modèle de Machine Learning :green['KNN'] (K-Nearest Neighbors) pour prédire les recommandations en fonction d'un film.")

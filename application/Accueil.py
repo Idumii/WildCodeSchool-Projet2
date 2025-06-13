@@ -44,6 +44,7 @@ def search_movies(query: str):
         for _, row in filtered_movies.iterrows()
     ]
 
+st.title("Recherchez un film pour obtenir des informations et des suggestions !")
 selected_movie = st_searchbox(
     search_movies,
     key="accueil_movie_searchbox",
@@ -59,7 +60,7 @@ if selected_movie:
 # Ici, ne fais rien d'autre avec st.session_state.current_movie
 # Affiche toujours la searchbox sur la page accueil
 
-st.sidebar.success("Choisir une page au-dessus.")
+#st.sidebar.success("Choisissez une page ci-dessus.")
 
 # Affichage des dernières sorties de films
 recent_movies = get_recent_movies(page_count=1)
@@ -104,7 +105,7 @@ options = [
     "1970", "1980", "1990", "2000", "2010", "2020"
 ]
 selection = st.pills(
-    "Sélectionner une décennie",
+    "Sélectionnez une décennie",
     options=options,
     selection_mode="single",
     default=options[0],
